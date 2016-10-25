@@ -1,0 +1,26 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    categorical_distribution (0.1.0)
+    multiset (0.5.1)
+    rack (1.6.4)
+    rack-protection (1.5.3)
+      rack
+    sinatra (1.4.7)
+      rack (~> 1.5)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
+    tilt (2.0.5)
+    tqdm (0.3.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  categorical_distribution
+  multiset
+  sinatra
+  tqdm
+
+BUNDLED WITH
+   1.13.1
