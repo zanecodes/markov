@@ -9,23 +9,23 @@ def generate_most_likely(model, chain=[])
   end
 end
 
-DICTIONARIES = %w[
-  english_10
-  english_20
-  english_35
-  english_40
-  english_50
-  english_55
-  english_60
-  english_70
-  english_80
-  english_95
-  german
-]
+DICTIONARIES = {
+  'english_10'  => 'en-US',
+  'english_20'  => 'en-US',
+  'english_35'  => 'en-US',
+  'english_40'  => 'en-US',
+  'english_50'  => 'en-US',
+  'english_55'  => 'en-US',
+  'english_60'  => 'en-US',
+  'english_70'  => 'en-US',
+  'english_80'  => 'en-US',
+  'english_95'  => 'en-US',
+  'german'      => 'de-DE'
+}
 
 FACTORS = (1..3)
 
-MODELS = DICTIONARIES.map do |name|
+MODELS = DICTIONARIES.keys.map do |name|
   [ name,
     FACTORS.map do |n|
       path = "models/#{n}/#{name}.bin"
@@ -40,6 +40,7 @@ get '/' do
 
   model = MODELS[@dictionary][@factor]
   @word = model.generate.join.strip
+  @language = DICTIONARIES[@dictionary]
 
   erb :index 
 end
@@ -52,10 +53,18 @@ __END__
 <title>Markov Word Generator</title>
 </head>
 <body>
-  <h1><%= @word %></h1>
+  <script>
+    window.speechSynthesis.getVoices();
+    function play() {
+      var word = new SpeechSynthesisUtterance('<%= @word %>');
+      word.voice = window.speechSynthesis.getVoices().filter(function(voice) { return voice.lang == '<%= @language %>'; })[0];
+      window.speechSynthesis.speak(word);
+    }
+  </script>
+  <h1 onclick="play()"><%= @word %></h1>
   <form method="get">
     <select name="dictionary">
-      <% DICTIONARIES.each do |name| %>
+      <% DICTIONARIES.keys.each do |name| %>
         <option<%= ' selected' if name == @dictionary %>>
           <%= name %>
         </option>
