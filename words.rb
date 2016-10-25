@@ -23,7 +23,7 @@ DICTIONARIES = %w[
   german
 ]
 
-FACTORS = (1..5)
+FACTORS = (1..3)
 
 MODELS = DICTIONARIES.map do |name|
   [ name,
@@ -35,9 +35,40 @@ MODELS = DICTIONARIES.map do |name|
 end.to_h
 
 get '/' do
-  dictionary = params['dictionary'] || 'english_35'
-  factor = (params['factor'] || 3).to_i
+  @dictionary = params['dictionary'] || 'english_35'
+  @factor = (params['factor'] || 3).to_i
 
-  model = MODELS[dictionary][factor]
-  model.generate.join.strip
+  model = MODELS[@dictionary][@factor]
+  @word = model.generate.join.strip
+
+  erb :index 
 end
+
+__END__
+
+@@ index
+<html>
+<head>
+<title>Markov Word Generator</title>
+</head>
+<body>
+  <h1><%= @word %></h1>
+  <form method="get">
+    <select name="dictionary">
+      <% DICTIONARIES.each do |name| %>
+        <option<%= ' selected' if name == @dictionary %>>
+          <%= name %>
+        </option>
+      <% end %>
+    </select>
+    <select name="factor">
+      <% FACTORS.each do |n| %>
+        <option<%= ' selected' if n == @factor %>>
+          <%= n %>
+        </option>
+      <% end %>
+    </select>
+    <input type="submit" value="Generate" />
+  </form>
+</body>
+</html>
