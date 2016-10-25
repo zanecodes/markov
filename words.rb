@@ -20,7 +20,8 @@ DICTIONARIES = {
   'english_70'  => 'en-US',
   'english_80'  => 'en-US',
   'english_95'  => 'en-US',
-  'german'      => 'de-DE'
+  'german'      => 'de-DE',
+  'japanese'    => 'ja-JP'
 }
 
 FACTORS = (1..3)
