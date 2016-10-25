@@ -9,7 +9,7 @@ def generate_most_likely(model, chain=[])
   end
 end
 
-dictionaries = %w[
+DICTIONARIES = %w[
   english_10
   english_20
   english_35
@@ -23,30 +23,21 @@ dictionaries = %w[
   german
 ]
 
-factors = (1..5)
+FACTORS = (1..5)
 
-MODELS = dictionaries.map do |name|
-    [name, factors.map { |n| [n, "models/#{n}/#{name}.bin"] }.to_h ]
-  end.to_h
-MODELS.default = {}
-
-def get_model(dictionary, factor)
-  model = MODELS[dictionary][factor]
-
-  if model.nil?
-    get_model('english_35', 3)
-  elsif model.is_a?(String)
-    puts "Loading #{model}..."
-    MODELS[dictionary][factor] = Marshal::load(File.new(model, mode: 'rb'))
-  else
-    model
-  end
-end
+MODELS = DICTIONARIES.map do |name|
+  [ name,
+    FACTORS.map do |n|
+      path = "models/#{n}/#{name}.bin"
+      puts "Loading #{path}..."
+      [n, Marshal::load(File.new(path, mode: 'rb'))]
+    end.to_h ]
+end.to_h
 
 get '/' do
-  dictionary = params['dictionary']
-  factor = params['factor'].to_i
+  dictionary = params['dictionary'] || 'english_35'
+  factor = (params['factor'] || 3).to_i
 
-  model = get_model(dictionary, factor)
+  model = MODELS[dictionary][factor]
   model.generate.join.strip
 end
